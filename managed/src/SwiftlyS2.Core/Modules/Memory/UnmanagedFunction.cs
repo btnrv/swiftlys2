@@ -80,6 +80,13 @@ internal class UnmanagedFunction<TDelegate> : UnmanagedFunction, IUnmanagedFunct
         }
     }
 
+    internal Guid AddHook( nint nativeCallback, Action<nint> onOriginal )
+    {
+        var id = _HookManager.AddHook(Address, nativeCallback, onOriginal);
+        Hooks.Add(id);
+        return id;
+    }
+
     public void RemoveHook( Guid id )
     {
         try

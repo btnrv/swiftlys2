@@ -17,7 +17,9 @@ internal class HookManager
         public required Guid Id { get; init; }
         public nint HookHandle { get; set; }
         public nint OriginalFuncPtr { get; set; }
-        public required Func<Func<nint>, Delegate> CallbackBuilder { get; init; }
+        public Func<Func<nint>, Delegate>? CallbackBuilder { get; init; }
+        public nint NativeCallback { get; init; }
+        public Action<nint>? OnOriginal { get; init; }
         public Delegate? BuiltDelegate { get; set; }
         public nint BuiltPointer { get; set; }
     }
@@ -123,11 +125,24 @@ internal class HookManager
 
     public Guid AddHook( nint functionAddress, Func<Func<nint>, Delegate> callbackBuilder )
     {
-        var node = new HookNode {
+        return AddNode(functionAddress, new HookNode {
             Id = Guid.NewGuid(),
             CallbackBuilder = callbackBuilder,
-        };
+        });
+    }
 
+    // For a ready native detour; onOriginal receives the pointer to the next hook (or the original function) after every chain rebuild.
+    public Guid AddHook( nint functionAddress, nint nativeCallback, Action<nint> onOriginal )
+    {
+        return AddNode(functionAddress, new HookNode {
+            Id = Guid.NewGuid(),
+            NativeCallback = nativeCallback,
+            OnOriginal = onOriginal,
+        });
+    }
+
+    private Guid AddNode( nint functionAddress, HookNode node )
+    {
         if (!chains.TryGetValue(functionAddress, out var chain))
         {
             chain = new HookChain { FunctionAddress = functionAddress };
@@ -190,15 +205,23 @@ internal class HookManager
             {
                 var node = chain.Nodes[i];
 
-                var built = node.CallbackBuilder(() => node.OriginalFuncPtr);
-                node.BuiltDelegate = built;
-                node.BuiltPointer = Marshal.GetFunctionPointerForDelegate(node.BuiltDelegate);
+                if (node.CallbackBuilder == null)
+                {
+                    node.BuiltPointer = node.NativeCallback;
+                }
+                else
+                {
+                    var built = node.CallbackBuilder(() => node.OriginalFuncPtr);
+                    node.BuiltDelegate = built;
+                    node.BuiltPointer = Marshal.GetFunctionPointerForDelegate(node.BuiltDelegate);
+                }
                 if (i == 0)
                 {
                     chain.HookHandle = NativeHooks.AllocateHook();
                     NativeHooks.SetHook(chain.HookHandle, chain.FunctionAddress, node.BuiltPointer);
                     node.OriginalFuncPtr = NativeHooks.GetHookOriginal(chain.HookHandle);
                     chain.OriginalFunctionAddress = node.OriginalFuncPtr;
+                    node.OnOriginal?.Invoke(node.OriginalFuncPtr);
                     NativeHooks.EnableHook(chain.HookHandle);
                     chain.Hooked = true;
                 }
@@ -206,8 +229,10 @@ internal class HookManager
                 {
                     node.HookHandle = NativeHooks.AllocateHook();
                     NativeHooks.SetHook(node.HookHandle, chain.Nodes[i - 1].OriginalFuncPtr, node.BuiltPointer);
-                    NativeHooks.EnableHook(node.HookHandle);
+                    // The trampoline exists before the hook is enabled, so the original can be published first.
                     node.OriginalFuncPtr = NativeHooks.GetHookOriginal(node.HookHandle);
+                    node.OnOriginal?.Invoke(node.OriginalFuncPtr);
+                    NativeHooks.EnableHook(node.HookHandle);
                 }
             }
         }

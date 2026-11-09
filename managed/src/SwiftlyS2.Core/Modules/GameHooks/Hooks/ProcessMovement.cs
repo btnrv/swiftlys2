@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+using SwiftlyS2.Core.Memory;
 using SwiftlyS2.Shared.GameHooks;
 using SwiftlyS2.Shared.Misc;
 
@@ -7,7 +9,9 @@ internal static partial class GameHooksPublisher
 {
     private delegate void CCSPlayerMovementServicesProcessMovement( nint movementServices, nint moveData );
 
-    internal static Guid HookProcessMovement()
+    private static nint processMovementOriginal;
+
+    internal static unsafe Guid HookProcessMovement()
     {
         if (_core == null) throw new InvalidOperationException("GameHooksCore is not initialized.");
 
@@ -15,45 +19,47 @@ internal static partial class GameHooksPublisher
         if (ProcessMovementPtr == 0)
             throw new InvalidOperationException("Failed to find signature for CCSPlayer_MovementServices::ProcessMovement.");
 
-        var ProcessMovementUmanagedFunction = _core.Memory.GetUnmanagedFunctionByAddress<CCSPlayerMovementServicesProcessMovement>(ProcessMovementPtr);
-        return ProcessMovementUmanagedFunction.AddHook(next =>
+        var ProcessMovementUmanagedFunction = (UnmanagedFunction<CCSPlayerMovementServicesProcessMovement>)_core.Memory.GetUnmanagedFunctionByAddress<CCSPlayerMovementServicesProcessMovement>(ProcessMovementPtr);
+        return ProcessMovementUmanagedFunction.AddHook((nint)(delegate* unmanaged<nint, nint, void>)&ProcessMovementDetour, static original => Volatile.Write(ref processMovementOriginal, original));
+    }
+
+    [UnmanagedCallersOnly]
+    private static unsafe void ProcessMovementDetour( nint movementServices, nint moveData )
+    {
+        var original = (delegate* unmanaged<nint, nint, void>)Volatile.Read(ref processMovementOriginal);
+
+        var dummy = _pawnComponentPool.Rent();
+        dummy.DangerousSetHandle(movementServices);
+        var player = dummy.ToPlayer();
+        _pawnComponentPool.Return(dummy);
+        if (player == null) { original(movementServices, moveData); return; }
+
+        var moveDataImpl = _moveDataPool.Rent();
+        moveDataImpl.Address = moveData;
+
+        var preCtx = new ProcessMovementMovementPreContext {
+            Params = new ProcessMovementMovementParams {
+                Player = player,
+                MoveData = moveDataImpl
+            }
+        };
+
+        InvokeProcessMovementPre(ref preCtx);
+        if (preCtx.HookResult == HookResult.Stop || preCtx.HookResult == HookResult.CancelOriginal)
         {
-            return ( movementServices, moveData ) =>
-            {
-                var dummy = _pawnComponentPool.Rent();
-                dummy.DangerousSetHandle(movementServices);
-                var player = dummy.ToPlayer();
-                _pawnComponentPool.Return(dummy);
-                if (player == null) { next()(movementServices, moveData); return; }
+            moveDataImpl.Address = 0;
+            _moveDataPool.Return(moveDataImpl);
+            return;
+        }
 
-                var moveDataImpl = _moveDataPool.Rent();
-                moveDataImpl.Address = moveData;
+        original(movementServices, moveData);
 
-                var preCtx = new ProcessMovementMovementPreContext {
-                    Params = new ProcessMovementMovementParams {
-                        Player = player,
-                        MoveData = moveDataImpl
-                    }
-                };
+        var postCtx = new ProcessMovementMovementPostContext { Params = preCtx.Params };
 
-                InvokeProcessMovementPre(ref preCtx);
-                if (preCtx.HookResult == HookResult.Stop || preCtx.HookResult == HookResult.CancelOriginal)
-                {
-                    moveDataImpl.Address = 0;
-                    _moveDataPool.Return(moveDataImpl);
-                    return;
-                }
+        InvokeProcessMovementPost(ref postCtx);
 
-                next()(movementServices, moveData);
-
-                var postCtx = new ProcessMovementMovementPostContext { Params = preCtx.Params };
-
-                InvokeProcessMovementPost(ref postCtx);
-
-                moveDataImpl.Address = 0;
-                _moveDataPool.Return(moveDataImpl);
-            };
-        });
+        moveDataImpl.Address = 0;
+        _moveDataPool.Return(moveDataImpl);
     }
 
     internal static Guid UnhookProcessMovement()

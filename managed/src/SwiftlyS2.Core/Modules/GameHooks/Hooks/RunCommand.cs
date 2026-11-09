@@ -1,4 +1,6 @@
+using System.Runtime.InteropServices;
 using SwiftlyS2.Core.Events;
+using SwiftlyS2.Core.Memory;
 using SwiftlyS2.Shared.GameHooks;
 using SwiftlyS2.Shared.Memory;
 using SwiftlyS2.Shared.Misc;
@@ -9,7 +11,9 @@ internal static partial class GameHooksPublisher
 {
     private delegate nint CPlayerMovementServicesRunCommand( nint pMovementServices, nint pUserCmd );
 
-    internal static Guid HookRunCommand()
+    private static nint runCommandOriginal;
+
+    internal static unsafe Guid HookRunCommand()
     {
         if (_core == null) throw new InvalidOperationException("GameHooksCore is not initialized.");
 
@@ -17,58 +21,59 @@ internal static partial class GameHooksPublisher
         if (offset < 0)
             throw new InvalidOperationException("Failed to find offset for CPlayer_MovementServices::RunCommand.");
 
-        var runCommand = _core.Memory.GetUnmanagedFunctionByVTable<CPlayerMovementServicesRunCommand>(_core.Memory.GetVTableAddress(Library.Server, "CPlayer_MovementServices")!.Value, offset);
-        return runCommand.AddHook(next =>
+        var runCommand = (UnmanagedFunction<CPlayerMovementServicesRunCommand>)_core.Memory.GetUnmanagedFunctionByVTable<CPlayerMovementServicesRunCommand>(_core.Memory.GetVTableAddress(Library.Server, "CPlayer_MovementServices")!.Value, offset);
+        return runCommand.AddHook((nint)(delegate* unmanaged<nint, nint, nint>)&RunCommandDetour, static original => Volatile.Write(ref runCommandOriginal, original));
+    }
+
+    [UnmanagedCallersOnly]
+    private static unsafe nint RunCommandDetour( nint pMovementServices, nint pUserCmd )
+    {
+        var original = (delegate* unmanaged<nint, nint, nint>)Volatile.Read(ref runCommandOriginal);
+
+        var dummy = _pawnComponentPool.Rent();
+        dummy.DangerousSetHandle(pMovementServices);
+        var player = dummy.ToPlayer();
+        _pawnComponentPool.Return(dummy);
+        if (player == null) return original(pMovementServices, pUserCmd);
+
+        var userCmdImpl = _userCmdPool.Rent();
+        userCmdImpl.Address = pUserCmd;
+
+        var preCtx = new RunCommandMovementPreContext {
+            Params = new RunCommandMovementParams {
+                Player = player,
+                UserCmd = userCmdImpl
+            }
+        };
+
+        if (EventPublisher.ListensToRunCommand)
         {
-            return ( pMovementServices, pUserCmd ) =>
-            {
-
-                var dummy = _pawnComponentPool.Rent();
-                dummy.DangerousSetHandle(pMovementServices);
-                var player = dummy.ToPlayer();
-                _pawnComponentPool.Return(dummy);
-                if (player == null) return next()(pMovementServices, pUserCmd);
-
-                var userCmdImpl = _userCmdPool.Rent();
-                userCmdImpl.Address = pUserCmd;
-
-                var preCtx = new RunCommandMovementPreContext {
-                    Params = new RunCommandMovementParams {
-                        Player = player,
-                        UserCmd = userCmdImpl
-                    }
-                };
-
-                if (EventPublisher.ListensToRunCommand)
-                {
-                    using var ev = new OnMovementServicesRunCommandHookEvent {
-                        MovementServices = preCtx.Params.Player.PlayerPawn!.MovementServices!,
-                        ButtonState = preCtx.Params.UserCmd.ButtonState,
-                        UserCmdPB = preCtx.Params.UserCmd.CSGOUserCmd
-                    };
-                    EventPublisher.InvokeOnMovementServicesRunCommandHook(ev);
-                }
-
-                InvokeRunCommandPre(ref preCtx);
-                if (preCtx.HookResult == HookResult.Stop || preCtx.HookResult == HookResult.CancelOriginal)
-                {
-                    userCmdImpl.Address = 0;
-                    _userCmdPool.Return(userCmdImpl);
-                    return 0;
-                }
-
-                var result = next()(pMovementServices, pUserCmd);
-
-                var postCtx = new RunCommandMovementPostContext { Params = preCtx.Params };
-
-                InvokeRunCommandPost(ref postCtx);
-
-                userCmdImpl.Address = 0;
-                _userCmdPool.Return(userCmdImpl);
-
-                return result;
+            using var ev = new OnMovementServicesRunCommandHookEvent {
+                MovementServices = preCtx.Params.Player.PlayerPawn!.MovementServices!,
+                ButtonState = preCtx.Params.UserCmd.ButtonState,
+                UserCmdPB = preCtx.Params.UserCmd.CSGOUserCmd
             };
-        });
+            EventPublisher.InvokeOnMovementServicesRunCommandHook(ev);
+        }
+
+        InvokeRunCommandPre(ref preCtx);
+        if (preCtx.HookResult == HookResult.Stop || preCtx.HookResult == HookResult.CancelOriginal)
+        {
+            userCmdImpl.Address = 0;
+            _userCmdPool.Return(userCmdImpl);
+            return 0;
+        }
+
+        var result = original(pMovementServices, pUserCmd);
+
+        var postCtx = new RunCommandMovementPostContext { Params = preCtx.Params };
+
+        InvokeRunCommandPost(ref postCtx);
+
+        userCmdImpl.Address = 0;
+        _userCmdPool.Return(userCmdImpl);
+
+        return result;
     }
 
     internal static Guid UnhookRunCommand()
