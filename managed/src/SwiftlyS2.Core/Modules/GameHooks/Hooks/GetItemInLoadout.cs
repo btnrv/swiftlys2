@@ -117,25 +117,21 @@ internal static partial class GameHooksPublisher
 
     internal static void InvokeGetItemInLoadoutPre( ref GetItemInLoadoutPreContext ctx )
     {
-        lock (subscribersLock)
+        var services = Volatile.Read(ref preServices[(int)HookListener.GetItemInLoadout]);
+        for (var i = 0; i < services.Length; i++)
         {
-            for (var i = 0; i < subscribers.Count; i++)
-            {
-                subscribers[i].InvokeGetItemInLoadoutPre(ref ctx);
-                if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
-            }
+            services[i].InvokeGetItemInLoadoutPre(ref ctx);
+            if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
         }
     }
 
     internal static void InvokeGetItemInLoadoutPost( ref GetItemInLoadoutPostContext ctx )
     {
-        lock (subscribersLock)
+        var services = Volatile.Read(ref postServices[(int)HookListener.GetItemInLoadout]);
+        for (var i = 0; i < services.Length; i++)
         {
-            for (var i = 0; i < subscribers.Count; i++)
-            {
-                subscribers[i].InvokeGetItemInLoadoutPost(ref ctx);
-                if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
-            }
+            services[i].InvokeGetItemInLoadoutPost(ref ctx);
+            if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
         }
     }
 }

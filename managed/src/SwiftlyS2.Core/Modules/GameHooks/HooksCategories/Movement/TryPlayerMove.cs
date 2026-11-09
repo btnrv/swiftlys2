@@ -13,10 +13,12 @@ internal sealed class TryPlayerMoveMovementHook : ITryPlayerMoveMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.TryPlayerMove);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.TryPlayerMove);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.TryPlayerMove);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.TryPlayerMove);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class TryPlayerMoveMovementHook : ITryPlayerMoveMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.TryPlayerMove);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.TryPlayerMove);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.TryPlayerMove);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.TryPlayerMove);
         }
     }

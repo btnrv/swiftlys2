@@ -13,10 +13,12 @@ internal sealed class CheckJumpButtonLegacyMovementHook : ICheckJumpButtonLegacy
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.CheckJumpButtonLegacy);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckJumpButtonLegacy);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckJumpButtonLegacy);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.CheckJumpButtonLegacy);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class CheckJumpButtonLegacyMovementHook : ICheckJumpButtonLegacy
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.CheckJumpButtonLegacy);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckJumpButtonLegacy);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckJumpButtonLegacy);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.CheckJumpButtonLegacy);
         }
     }

@@ -13,10 +13,12 @@ internal sealed class GroundAccelerateMovementHook : IGroundAccelerateMovementHo
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.GroundAccelerate);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.GroundAccelerate);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.GroundAccelerate);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.GroundAccelerate);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class GroundAccelerateMovementHook : IGroundAccelerateMovementHo
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.GroundAccelerate);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.GroundAccelerate);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.GroundAccelerate);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.GroundAccelerate);
         }
     }

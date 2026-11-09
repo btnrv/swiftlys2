@@ -13,10 +13,12 @@ internal sealed class SimulateUserCommandsHook : ISimulateUserCommandsHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.SimulateUserCommands);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.SimulateUserCommands);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.SimulateUserCommands);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.SimulateUserCommands);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class SimulateUserCommandsHook : ISimulateUserCommandsHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.SimulateUserCommands);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.SimulateUserCommands);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.SimulateUserCommands);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.SimulateUserCommands);
         }
     }

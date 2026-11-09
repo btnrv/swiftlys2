@@ -13,10 +13,12 @@ internal sealed class FireOutputEntityHook : IFireOutputEntityHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.FireOutput);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.FireOutput);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.FireOutput);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.FireOutput);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class FireOutputEntityHook : IFireOutputEntityHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.FireOutput);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.FireOutput);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.FireOutput);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.FireOutput);
         }
     }

@@ -13,10 +13,12 @@ internal sealed class FrictionMovementHook : IFrictionMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.Friction);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.Friction);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.Friction);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.Friction);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class FrictionMovementHook : IFrictionMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.Friction);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.Friction);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.Friction);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.Friction);
         }
     }

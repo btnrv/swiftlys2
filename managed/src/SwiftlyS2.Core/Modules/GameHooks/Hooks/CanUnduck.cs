@@ -76,25 +76,21 @@ internal static partial class GameHooksPublisher
 
     internal static void InvokeCanUnduckPre( ref CanUnduckMovementPreContext ctx )
     {
-        lock (subscribersLock)
+        var services = Volatile.Read(ref preServices[(int)HookListener.CanUnduck]);
+        for (var i = 0; i < services.Length; i++)
         {
-            for (var i = 0; i < subscribers.Count; i++)
-            {
-                subscribers[i].InvokeCanUnduckPre(ref ctx);
-                if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
-            }
+            services[i].InvokeCanUnduckPre(ref ctx);
+            if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
         }
     }
 
     internal static void InvokeCanUnduckPost( ref CanUnduckMovementPostContext ctx )
     {
-        lock (subscribersLock)
+        var services = Volatile.Read(ref postServices[(int)HookListener.CanUnduck]);
+        for (var i = 0; i < services.Length; i++)
         {
-            for (var i = 0; i < subscribers.Count; i++)
-            {
-                subscribers[i].InvokeCanUnduckPost(ref ctx);
-                if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
-            }
+            services[i].InvokeCanUnduckPost(ref ctx);
+            if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
         }
     }
 }

@@ -13,10 +13,12 @@ internal sealed class TakeDamageEntityHook : ITakeDamageEntityHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.TakeDamage);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.TakeDamage);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.TakeDamage);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.TakeDamage);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class TakeDamageEntityHook : ITakeDamageEntityHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.TakeDamage);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.TakeDamage);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.TakeDamage);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.TakeDamage);
         }
     }

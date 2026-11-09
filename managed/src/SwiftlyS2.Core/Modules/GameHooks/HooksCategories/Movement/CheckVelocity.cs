@@ -13,10 +13,12 @@ internal sealed class CheckVelocityMovementHook : ICheckVelocityMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.CheckVelocity);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckVelocity);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckVelocity);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.CheckVelocity);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class CheckVelocityMovementHook : ICheckVelocityMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.CheckVelocity);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckVelocity);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckVelocity);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.CheckVelocity);
         }
     }

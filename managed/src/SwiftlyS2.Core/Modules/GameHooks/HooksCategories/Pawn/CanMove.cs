@@ -13,10 +13,12 @@ internal sealed class CanMovePawnHook : ICanMovePawnHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.CanMove);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanMove);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanMove);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.CanMove);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class CanMovePawnHook : ICanMovePawnHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.CanMove);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanMove);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanMove);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.CanMove);
         }
     }

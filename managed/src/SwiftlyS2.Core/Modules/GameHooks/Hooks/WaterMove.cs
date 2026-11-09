@@ -75,25 +75,21 @@ internal static partial class GameHooksPublisher
 
     internal static void InvokeWaterMovePre( ref WaterMoveMovementPreContext ctx )
     {
-        lock (subscribersLock)
+        var services = Volatile.Read(ref preServices[(int)HookListener.WaterMove]);
+        for (var i = 0; i < services.Length; i++)
         {
-            for (var i = 0; i < subscribers.Count; i++)
-            {
-                subscribers[i].InvokeWaterMovePre(ref ctx);
-                if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
-            }
+            services[i].InvokeWaterMovePre(ref ctx);
+            if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
         }
     }
 
     internal static void InvokeWaterMovePost( ref WaterMoveMovementPostContext ctx )
     {
-        lock (subscribersLock)
+        var services = Volatile.Read(ref postServices[(int)HookListener.WaterMove]);
+        for (var i = 0; i < services.Length; i++)
         {
-            for (var i = 0; i < subscribers.Count; i++)
-            {
-                subscribers[i].InvokeWaterMovePost(ref ctx);
-                if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
-            }
+            services[i].InvokeWaterMovePost(ref ctx);
+            if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
         }
     }
 }

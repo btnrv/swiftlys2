@@ -13,10 +13,12 @@ internal sealed class AirMoveMovementHook : IAirMoveMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.AirMove);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.AirMove);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.AirMove);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.AirMove);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class AirMoveMovementHook : IAirMoveMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.AirMove);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.AirMove);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.AirMove);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.AirMove);
         }
     }

@@ -75,25 +75,21 @@ internal static partial class GameHooksPublisher
 
     internal static void InvokeCheckParametersPre( ref CheckParametersMovementPreContext ctx )
     {
-        lock (subscribersLock)
+        var services = Volatile.Read(ref preServices[(int)HookListener.CheckParameters]);
+        for (var i = 0; i < services.Length; i++)
         {
-            for (var i = 0; i < subscribers.Count; i++)
-            {
-                subscribers[i].InvokeCheckParametersPre(ref ctx);
-                if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
-            }
+            services[i].InvokeCheckParametersPre(ref ctx);
+            if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
         }
     }
 
     internal static void InvokeCheckParametersPost( ref CheckParametersMovementPostContext ctx )
     {
-        lock (subscribersLock)
+        var services = Volatile.Read(ref postServices[(int)HookListener.CheckParameters]);
+        for (var i = 0; i < services.Length; i++)
         {
-            for (var i = 0; i < subscribers.Count; i++)
-            {
-                subscribers[i].InvokeCheckParametersPost(ref ctx);
-                if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
-            }
+            services[i].InvokeCheckParametersPost(ref ctx);
+            if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
         }
     }
 }

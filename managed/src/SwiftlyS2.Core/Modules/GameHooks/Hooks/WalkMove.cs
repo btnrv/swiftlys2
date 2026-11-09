@@ -75,25 +75,21 @@ internal static partial class GameHooksPublisher
 
     internal static void InvokeWalkMovePre( ref WalkMoveMovementPreContext ctx )
     {
-        lock (subscribersLock)
+        var services = Volatile.Read(ref preServices[(int)HookListener.WalkMove]);
+        for (var i = 0; i < services.Length; i++)
         {
-            for (var i = 0; i < subscribers.Count; i++)
-            {
-                subscribers[i].InvokeWalkMovePre(ref ctx);
-                if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
-            }
+            services[i].InvokeWalkMovePre(ref ctx);
+            if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
         }
     }
 
     internal static void InvokeWalkMovePost( ref WalkMoveMovementPostContext ctx )
     {
-        lock (subscribersLock)
+        var services = Volatile.Read(ref postServices[(int)HookListener.WalkMove]);
+        for (var i = 0; i < services.Length; i++)
         {
-            for (var i = 0; i < subscribers.Count; i++)
-            {
-                subscribers[i].InvokeWalkMovePost(ref ctx);
-                if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
-            }
+            services[i].InvokeWalkMovePost(ref ctx);
+            if (ctx.HookResult == HookResult.Stop || ctx.HookResult == HookResult.Handled) return;
         }
     }
 }

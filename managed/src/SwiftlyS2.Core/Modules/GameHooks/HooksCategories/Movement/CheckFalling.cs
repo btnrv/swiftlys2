@@ -13,10 +13,12 @@ internal sealed class CheckFallingMovementHook : ICheckFallingMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.CheckFalling);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckFalling);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckFalling);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.CheckFalling);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class CheckFallingMovementHook : ICheckFallingMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.CheckFalling);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckFalling);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckFalling);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.CheckFalling);
         }
     }

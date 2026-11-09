@@ -13,10 +13,12 @@ internal sealed class EndTouchEntityHook : IEndTouchEntityHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.EndTouch);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.EndTouch);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.EndTouch);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.EndTouch);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class EndTouchEntityHook : IEndTouchEntityHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.EndTouch);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.EndTouch);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.EndTouch);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.EndTouch);
         }
     }

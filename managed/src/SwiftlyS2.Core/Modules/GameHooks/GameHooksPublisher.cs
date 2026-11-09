@@ -58,17 +58,34 @@ internal static partial class GameHooksPublisher
     private static readonly List<GameHooksService> subscribers = [];
     private static readonly Lock subscribersLock = new();
 
+    // Per hook, the services with a Pre or Post listener in subscribe order; rebuilt under subscribersLock, read without it.
+    private static readonly GameHooksService[][] preServices = NewSnapshots();
+    private static readonly GameHooksService[][] postServices = NewSnapshots();
+
     private static readonly Dictionary<HookListener, int> hookListeners = [];
     private static readonly Lock hookListenersLock = new();
 
     private static readonly Dictionary<HookListener, Guid> hookIds = [];
     private static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
+    private static GameHooksService[][] NewSnapshots() => [.. Enum.GetValues<HookListener>().Select(_ => Array.Empty<GameHooksService>())];
+
+    // Call after the hook's listener delegate changed, so the rebuild sees the new state.
+    internal static void RefreshSnapshots( HookListener hookName )
+    {
+        lock (subscribersLock)
+        {
+            Volatile.Write(ref preServices[(int)hookName], subscribers.FindAll(s => s.GetListenerState(hookName).HasPre).ToArray());
+            Volatile.Write(ref postServices[(int)hookName], subscribers.FindAll(s => s.GetListenerState(hookName).HasPost).ToArray());
+        }
+    }
+
     internal static void Subscribe( GameHooksService subscriber )
     {
         lock (subscribersLock)
         {
             subscribers.Add(subscriber);
+            RefreshAllSnapshots();
         }
     }
 
@@ -77,6 +94,15 @@ internal static partial class GameHooksPublisher
         lock (subscribersLock)
         {
             _ = subscribers.Remove(subscriber);
+            RefreshAllSnapshots();
+        }
+    }
+
+    private static void RefreshAllSnapshots()
+    {
+        foreach (var hookName in Enum.GetValues<HookListener>())
+        {
+            RefreshSnapshots(hookName);
         }
     }
 

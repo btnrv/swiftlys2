@@ -13,10 +13,12 @@ internal sealed class CheckParametersMovementHook : ICheckParametersMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.CheckParameters);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckParameters);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckParameters);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.CheckParameters);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class CheckParametersMovementHook : ICheckParametersMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.CheckParameters);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckParameters);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckParameters);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.CheckParameters);
         }
     }

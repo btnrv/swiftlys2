@@ -13,10 +13,12 @@ internal sealed class ProcessUsercmdsHook : IProcessUsercmdsHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.ProcessUsercmds);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.ProcessUsercmds);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.ProcessUsercmds);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.ProcessUsercmds);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class ProcessUsercmdsHook : IProcessUsercmdsHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.ProcessUsercmds);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.ProcessUsercmds);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.ProcessUsercmds);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.ProcessUsercmds);
         }
     }

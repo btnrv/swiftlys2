@@ -13,10 +13,12 @@ internal sealed class LadderMoveMovementHook : ILadderMoveMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.LadderMove);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.LadderMove);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.LadderMove);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.LadderMove);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class LadderMoveMovementHook : ILadderMoveMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.LadderMove);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.LadderMove);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.LadderMove);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.LadderMove);
         }
     }

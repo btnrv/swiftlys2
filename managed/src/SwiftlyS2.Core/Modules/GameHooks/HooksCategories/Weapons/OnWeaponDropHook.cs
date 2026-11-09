@@ -13,10 +13,12 @@ internal sealed class WeaponDropHook : IWeaponDropHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.WeaponDrop);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.WeaponDrop);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.WeaponDrop);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.WeaponDrop);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class WeaponDropHook : IWeaponDropHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.WeaponDrop);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.WeaponDrop);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.WeaponDrop);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.WeaponDrop);
         }
     }

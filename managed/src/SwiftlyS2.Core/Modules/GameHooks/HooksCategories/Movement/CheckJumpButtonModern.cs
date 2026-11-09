@@ -13,10 +13,12 @@ internal sealed class CheckJumpButtonModernMovementHook : ICheckJumpButtonModern
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.CheckJumpButtonModern);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckJumpButtonModern);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckJumpButtonModern);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.CheckJumpButtonModern);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class CheckJumpButtonModernMovementHook : ICheckJumpButtonModern
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.CheckJumpButtonModern);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckJumpButtonModern);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckJumpButtonModern);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.CheckJumpButtonModern);
         }
     }

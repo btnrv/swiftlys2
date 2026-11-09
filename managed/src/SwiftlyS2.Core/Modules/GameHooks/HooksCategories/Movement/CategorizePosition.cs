@@ -13,10 +13,12 @@ internal sealed class CategorizePositionMovementHook : ICategorizePositionMoveme
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.CategorizePosition);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CategorizePosition);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CategorizePosition);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.CategorizePosition);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class CategorizePositionMovementHook : ICategorizePositionMoveme
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.CategorizePosition);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CategorizePosition);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CategorizePosition);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.CategorizePosition);
         }
     }

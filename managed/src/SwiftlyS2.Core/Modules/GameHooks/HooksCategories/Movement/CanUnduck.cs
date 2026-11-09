@@ -13,10 +13,12 @@ internal sealed class CanUnduckMovementHook : ICanUnduckMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.CanUnduck);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanUnduck);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanUnduck);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.CanUnduck);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class CanUnduckMovementHook : ICanUnduckMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.CanUnduck);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanUnduck);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanUnduck);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.CanUnduck);
         }
     }

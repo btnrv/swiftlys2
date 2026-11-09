@@ -93,6 +93,52 @@ internal sealed partial class GameHooksService : IGameHooks, IDisposable
         GC.SuppressFinalize(this);
     }
 
+    internal (bool HasPre, bool HasPost) GetListenerState( HookListener hook )
+    {
+        return hook switch {
+            HookListener.ProcessUsercmds => (ControllerHook.ProcessUsercmdsHook.HasPreListeners, ControllerHook.ProcessUsercmdsHook.HasPostListeners),
+            HookListener.CanAcquire => (ItemsHook.CanAcquireHook.HasPreListeners, ItemsHook.CanAcquireHook.HasPostListeners),
+            HookListener.RunCommand => (MovementHook.RunCommandHook.HasPreListeners, MovementHook.RunCommandHook.HasPostListeners),
+            HookListener.PostThink => (PawnHook.PostThinkHook.HasPreListeners, PawnHook.PostThinkHook.HasPostListeners),
+            HookListener.CanUse => (WeaponsHook.CanUseHook.HasPreListeners, WeaponsHook.CanUseHook.HasPostListeners),
+            HookListener.WeaponDrop => (WeaponsHook.DropHook.HasPreListeners, WeaponsHook.DropHook.HasPostListeners),
+            HookListener.SimulateUserCommands => (ControllerHook.SimulateUserCommandsHook.HasPreListeners, ControllerHook.SimulateUserCommandsHook.HasPostListeners),
+            HookListener.SetupMove => (MovementHook.SetupMoveHook.HasPreListeners, MovementHook.SetupMoveHook.HasPostListeners),
+            HookListener.ProcessMovement => (MovementHook.ProcessMovementHook.HasPreListeners, MovementHook.ProcessMovementHook.HasPostListeners),
+            HookListener.CheckFalling => (MovementHook.CheckFallingHook.HasPreListeners, MovementHook.CheckFallingHook.HasPostListeners),
+            HookListener.CategorizePosition => (MovementHook.CategorizePositionHook.HasPreListeners, MovementHook.CategorizePositionHook.HasPostListeners),
+            HookListener.TryPlayerMove => (MovementHook.TryPlayerMoveHook.HasPreListeners, MovementHook.TryPlayerMoveHook.HasPostListeners),
+            HookListener.WalkMove => (MovementHook.WalkMoveHook.HasPreListeners, MovementHook.WalkMoveHook.HasPostListeners),
+            HookListener.Friction => (MovementHook.FrictionHook.HasPreListeners, MovementHook.FrictionHook.HasPostListeners),
+            HookListener.AirAccelerate => (MovementHook.AirAccelerateHook.HasPreListeners, MovementHook.AirAccelerateHook.HasPostListeners),
+            HookListener.AirMove => (MovementHook.AirMoveHook.HasPreListeners, MovementHook.AirMoveHook.HasPostListeners),
+            HookListener.OnJumpModern => (MovementHook.OnJumpModernHook.HasPreListeners, MovementHook.OnJumpModernHook.HasPostListeners),
+            HookListener.OnJumpLegacy => (MovementHook.OnJumpLegacyHook.HasPreListeners, MovementHook.OnJumpLegacyHook.HasPostListeners),
+            HookListener.CheckJumpButtonModern => (MovementHook.CheckJumpButtonModernHook.HasPreListeners, MovementHook.CheckJumpButtonModernHook.HasPostListeners),
+            HookListener.CheckJumpButtonLegacy => (MovementHook.CheckJumpButtonLegacyHook.HasPreListeners, MovementHook.CheckJumpButtonLegacyHook.HasPostListeners),
+            HookListener.LadderMove => (MovementHook.LadderMoveHook.HasPreListeners, MovementHook.LadderMoveHook.HasPostListeners),
+            HookListener.CanUnduck => (MovementHook.CanUnduckHook.HasPreListeners, MovementHook.CanUnduckHook.HasPostListeners),
+            HookListener.Duck => (MovementHook.DuckHook.HasPreListeners, MovementHook.DuckHook.HasPostListeners),
+            HookListener.CheckVelocity => (MovementHook.CheckVelocityHook.HasPreListeners, MovementHook.CheckVelocityHook.HasPostListeners),
+            HookListener.WaterMove => (MovementHook.WaterMoveHook.HasPreListeners, MovementHook.WaterMoveHook.HasPostListeners),
+            HookListener.CheckWater => (MovementHook.CheckWaterHook.HasPreListeners, MovementHook.CheckWaterHook.HasPostListeners),
+            HookListener.MoveInit => (MovementHook.MoveInitHook.HasPreListeners, MovementHook.MoveInitHook.HasPostListeners),
+            HookListener.FullWalkMove => (MovementHook.FullWalkMoveHook.HasPreListeners, MovementHook.FullWalkMoveHook.HasPostListeners),
+            HookListener.CheckParameters => (MovementHook.CheckParametersHook.HasPreListeners, MovementHook.CheckParametersHook.HasPostListeners),
+            HookListener.PlayerMove => (MovementHook.PlayerMoveHook.HasPreListeners, MovementHook.PlayerMoveHook.HasPostListeners),
+            HookListener.CanMove => (PawnHook.CanMoveHook.HasPreListeners, PawnHook.CanMoveHook.HasPostListeners),
+            HookListener.GroundAccelerate => (MovementHook.GroundAccelerateHook.HasPreListeners, MovementHook.GroundAccelerateHook.HasPostListeners),
+            HookListener.TakeDamage => (EntitiesHook.TakeDamageHook.HasPreListeners, EntitiesHook.TakeDamageHook.HasPostListeners),
+            HookListener.StartTouch => (EntitiesHook.StartTouchHook.HasPreListeners, EntitiesHook.StartTouchHook.HasPostListeners),
+            HookListener.Touch => (EntitiesHook.TouchHook.HasPreListeners, EntitiesHook.TouchHook.HasPostListeners),
+            HookListener.EndTouch => (EntitiesHook.EndTouchHook.HasPreListeners, EntitiesHook.EndTouchHook.HasPostListeners),
+            HookListener.AcceptInput => (EntitiesHook.AcceptInputHook.HasPreListeners, EntitiesHook.AcceptInputHook.HasPostListeners),
+            HookListener.FireOutput => (EntitiesHook.FireOutputHook.HasPreListeners, EntitiesHook.FireOutputHook.HasPostListeners),
+            HookListener.GetItemInLoadout => (ItemsHook.GetItemInLoadoutHook.HasPreListeners, ItemsHook.GetItemInLoadoutHook.HasPostListeners),
+            _ => (false, false),
+        };
+    }
+
     internal void InvokeProcessUsercmdsPre( ref ProcessUsercmdsPreContext ctx )
     {
         if (!ControllerHook.ProcessUsercmdsHook.HasPreListeners) return;

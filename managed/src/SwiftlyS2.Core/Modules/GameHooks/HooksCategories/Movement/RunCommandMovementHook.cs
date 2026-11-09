@@ -13,10 +13,12 @@ internal sealed class RunCommandMovementHook : IRunCommandMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.RunCommand);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.RunCommand);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.RunCommand);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.RunCommand);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class RunCommandMovementHook : IRunCommandMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.RunCommand);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.RunCommand);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.RunCommand);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.RunCommand);
         }
     }

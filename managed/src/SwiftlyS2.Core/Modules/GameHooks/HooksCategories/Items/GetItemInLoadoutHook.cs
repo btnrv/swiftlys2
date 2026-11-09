@@ -15,10 +15,12 @@ internal sealed class GetItemInLoadoutHook : IGetItemInLoadoutHook
             ThrowIfFollowingServerGuidelines();
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.GetItemInLoadout);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.GetItemInLoadout);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.GetItemInLoadout);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.GetItemInLoadout);
         }
     }
@@ -30,10 +32,12 @@ internal sealed class GetItemInLoadoutHook : IGetItemInLoadoutHook
             ThrowIfFollowingServerGuidelines();
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.GetItemInLoadout);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.GetItemInLoadout);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.GetItemInLoadout);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.GetItemInLoadout);
         }
     }

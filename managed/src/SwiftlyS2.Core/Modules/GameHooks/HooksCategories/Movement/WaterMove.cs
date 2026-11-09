@@ -13,10 +13,12 @@ internal sealed class WaterMoveMovementHook : IWaterMoveMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.WaterMove);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.WaterMove);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.WaterMove);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.WaterMove);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class WaterMoveMovementHook : IWaterMoveMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.WaterMove);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.WaterMove);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.WaterMove);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.WaterMove);
         }
     }

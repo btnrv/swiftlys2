@@ -13,10 +13,12 @@ internal sealed class TouchEntityHook : ITouchEntityHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.Touch);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.Touch);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.Touch);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.Touch);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class TouchEntityHook : ITouchEntityHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.Touch);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.Touch);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.Touch);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.Touch);
         }
     }

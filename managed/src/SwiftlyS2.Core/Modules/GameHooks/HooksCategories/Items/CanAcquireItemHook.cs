@@ -13,10 +13,12 @@ internal sealed class CanAcquireItemHook : ICanAcquireItemHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.CanAcquire);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanAcquire);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanAcquire);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.CanAcquire);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class CanAcquireItemHook : ICanAcquireItemHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.CanAcquire);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanAcquire);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanAcquire);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.CanAcquire);
         }
     }

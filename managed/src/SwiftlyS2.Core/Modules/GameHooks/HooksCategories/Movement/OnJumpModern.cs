@@ -13,10 +13,12 @@ internal sealed class OnJumpModernMovementHook : IOnJumpModernMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.OnJumpModern);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.OnJumpModern);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.OnJumpModern);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.OnJumpModern);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class OnJumpModernMovementHook : IOnJumpModernMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.OnJumpModern);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.OnJumpModern);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.OnJumpModern);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.OnJumpModern);
         }
     }

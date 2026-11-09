@@ -13,10 +13,12 @@ internal sealed class MoveInitMovementHook : IMoveInitMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.MoveInit);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.MoveInit);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.MoveInit);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.MoveInit);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class MoveInitMovementHook : IMoveInitMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.MoveInit);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.MoveInit);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.MoveInit);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.MoveInit);
         }
     }

@@ -13,10 +13,12 @@ internal sealed class PostThinkPawnHook : IPostThinkPawnHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.PostThink);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.PostThink);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.PostThink);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.PostThink);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class PostThinkPawnHook : IPostThinkPawnHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.PostThink);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.PostThink);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.PostThink);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.PostThink);
         }
     }

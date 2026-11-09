@@ -13,10 +13,12 @@ internal sealed class DuckMovementHook : IDuckMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.Duck);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.Duck);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.Duck);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.Duck);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class DuckMovementHook : IDuckMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.Duck);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.Duck);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.Duck);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.Duck);
         }
     }

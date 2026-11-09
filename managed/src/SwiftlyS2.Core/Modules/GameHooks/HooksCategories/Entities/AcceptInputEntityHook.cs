@@ -13,10 +13,12 @@ internal sealed class AcceptInputEntityHook : IAcceptInputEntityHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.AcceptInput);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.AcceptInput);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.AcceptInput);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.AcceptInput);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class AcceptInputEntityHook : IAcceptInputEntityHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.AcceptInput);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.AcceptInput);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.AcceptInput);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.AcceptInput);
         }
     }

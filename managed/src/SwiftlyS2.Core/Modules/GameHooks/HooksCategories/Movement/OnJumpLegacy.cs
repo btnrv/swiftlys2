@@ -13,10 +13,12 @@ internal sealed class OnJumpLegacyMovementHook : IOnJumpLegacyMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.OnJumpLegacy);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.OnJumpLegacy);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.OnJumpLegacy);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.OnJumpLegacy);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class OnJumpLegacyMovementHook : IOnJumpLegacyMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.OnJumpLegacy);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.OnJumpLegacy);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.OnJumpLegacy);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.OnJumpLegacy);
         }
     }

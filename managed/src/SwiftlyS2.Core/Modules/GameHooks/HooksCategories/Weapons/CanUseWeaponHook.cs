@@ -13,10 +13,12 @@ internal sealed class CanUseWeaponHook : ICanUseWeaponHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.CanUse);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanUse);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanUse);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.CanUse);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class CanUseWeaponHook : ICanUseWeaponHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.CanUse);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanUse);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CanUse);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.CanUse);
         }
     }

@@ -13,10 +13,12 @@ internal sealed class CheckWaterMovementHook : ICheckWaterMovementHook
         {
             if (_Pre == null) GameHooksPublisher.AddHookListener(HookListener.CheckWater);
             _Pre += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckWater);
         }
         remove
         {
             _Pre -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckWater);
             if (_Pre == null) GameHooksPublisher.RemoveHookListener(HookListener.CheckWater);
         }
     }
@@ -27,10 +29,12 @@ internal sealed class CheckWaterMovementHook : ICheckWaterMovementHook
         {
             if (_Post == null) GameHooksPublisher.AddHookListener(HookListener.CheckWater);
             _Post += value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckWater);
         }
         remove
         {
             _Post -= value;
+            GameHooksPublisher.RefreshSnapshots(HookListener.CheckWater);
             if (_Post == null) GameHooksPublisher.RemoveHookListener(HookListener.CheckWater);
         }
     }
